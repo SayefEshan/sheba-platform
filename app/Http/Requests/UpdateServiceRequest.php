@@ -11,7 +11,7 @@ class UpdateServiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check() && auth()->user()->canPerformAction('update_service');
     }
 
     /**
@@ -22,7 +22,30 @@ class UpdateServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['sometimes', 'string', 'max:255'],
+            'slug' => ['sometimes', 'string', 'max:255', 'unique:services,slug,' . $this->route('service')],
+            'service_category_id' => ['sometimes', 'exists:service_categories,id'],
+            'price' => ['sometimes', 'numeric', 'min:0'],
+            'description' => ['sometimes', 'string'],
+            'duration_minutes' => ['sometimes', 'integer', 'min:1'],
+            'is_active' => ['sometimes', 'boolean'],
+            'images' => ['sometimes', 'array'],
+            'images.*' => ['string', 'url'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'service_category_id.exists' => 'The selected service category does not exist.',
+            'price.min' => 'The price cannot be negative.',
+            'duration_minutes.min' => 'The duration must be at least 1 minute.',
+            'images.*.url' => 'Each image must be a valid URL.',
         ];
     }
 }
