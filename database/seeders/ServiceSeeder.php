@@ -148,7 +148,9 @@ class ServiceSeeder extends Seeder
         ];
 
         foreach ($services as $service) {
-            Service::create($service);
+            if (!Service::where('slug', $service['slug'])->exists()) {
+                Service::create($service);
+            }
         }
     }
 }
