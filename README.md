@@ -21,7 +21,7 @@ A modern service booking platform that allows users to book various services and
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/sheba-platform.git
+git clone https://github.com/SayefEshan/sheba-platform
 cd sheba-platform
 ```
 
