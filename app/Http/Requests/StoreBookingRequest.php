@@ -24,7 +24,7 @@ class StoreBookingRequest extends FormRequest
         return [
             'service_id' => 'required|exists:services,id',
             'customer_name' => 'required|string|max:100',
-            'customer_phone' => 'required|string|regex:/^(\+8801|01)[3-9]\d{8}$/|max:20',
+            'customer_phone' => ['required', 'string', 'regex:/^(\+8801|01)[3-9]\d{8}$/', 'max:20'],
             'customer_email' => 'nullable|email|max:100',
             'customer_address' => 'nullable|string|max:500',
             'scheduled_at' => 'nullable|date|after:now',

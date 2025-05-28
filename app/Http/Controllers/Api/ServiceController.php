@@ -60,23 +60,12 @@ class ServiceController extends Controller
     /**
      * Display the specified service.
      */
-    public function show(string $id): JsonResponse
+    public function show(Service $service): JsonResponse
     {
-        $service = Service::active()
-            ->withCategory()
-            ->find($id);
-
-        if (!$service) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Service not found'
-            ], 404);
-        }
-
         return response()->json([
             'status' => 'success',
             'message' => 'Service retrieved successfully',
-            'data' => $service
+            'data' => $service->load('serviceCategory')
         ]);
     }
 
@@ -100,19 +89,8 @@ class ServiceController extends Controller
     /**
      * Get services by category.
      */
-    public function byCategory(string $categorySlug, Request $request): JsonResponse
+    public function byCategory(ServiceCategory $category, Request $request): JsonResponse
     {
-        $category = ServiceCategory::active()
-            ->where('slug', $categorySlug)
-            ->first();
-
-        if (!$category) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Category not found'
-            ], 404);
-        }
-
         $perPage = min($request->get('per_page', 10), 50);
 
         $services = Service::active()

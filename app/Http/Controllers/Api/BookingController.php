@@ -89,18 +89,9 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $bookingId): JsonResponse
+    public function show(Booking $booking): JsonResponse
     {
-        $booking = Booking::where('booking_id', $bookingId)
-            ->withService()
-            ->first();
-
-        if (!$booking) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Booking not found'
-            ], 404);
-        }
+        $booking->load(['service', 'service.serviceCategory']);
 
         return response()->json([
             'status' => 'success',
@@ -109,19 +100,8 @@ class BookingController extends Controller
         ]);
     }
 
-    public function status(string $bookingId): JsonResponse
+    public function status(Booking $booking): JsonResponse
     {
-        $booking = Booking::where('booking_id', $bookingId)
-            ->select(['booking_id', 'status', 'scheduled_at', 'confirmed_at', 'completed_at', 'created_at'])
-            ->first();
-
-        if (!$booking) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Booking not found'
-            ], 404);
-        }
-
         return response()->json([
             'status' => 'success',
             'message' => 'Booking status retrieved successfully',
@@ -139,48 +119,10 @@ class BookingController extends Controller
     }
 
     /**
-     * Get bookings by customer phone number.
-     */
-    public function byPhone(Request $request): JsonResponse
-    {
-        $request->validate([
-            'phone' => 'required|string'
-        ]);
-
-        $bookings = Booking::where('customer_phone', $request->phone)
-            ->withService()
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Bookings retrieved successfully',
-            'data' => [
-                'bookings' => $bookings->items(),
-                'pagination' => [
-                    'current_page' => $bookings->currentPage(),
-                    'last_page' => $bookings->lastPage(),
-                    'per_page' => $bookings->perPage(),
-                    'total' => $bookings->total(),
-                ]
-            ]
-        ]);
-    }
-
-    /**
      * Cancel a booking (if allowed).
      */
-    public function cancel(string $bookingId): JsonResponse
+    public function cancel(Booking $booking): JsonResponse
     {
-        $booking = Booking::where('booking_id', $bookingId)->first();
-
-        if (!$booking) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Booking not found'
-            ], 404);
-        }
-
         if (!$booking->canBeCancelled()) {
             return response()->json([
                 'status' => 'error',

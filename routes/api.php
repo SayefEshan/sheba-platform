@@ -31,17 +31,16 @@ Route::prefix('v1')->group(function () {
     Route::prefix('services')->group(function () {
         Route::get('/', [ServiceController::class, 'index']);
         Route::get('/categories', [ServiceController::class, 'categories']);
-        Route::get('/category/{categorySlug}', [ServiceController::class, 'byCategory']);
-        Route::get('/{id}', [ServiceController::class, 'show']);
+        Route::get('/category/{category:slug}', [ServiceController::class, 'byCategory']);
+        Route::get('/{service:slug}', [ServiceController::class, 'show']);
     });
 
     // Booking endpoints
     Route::prefix('bookings')->group(function () {
         Route::post('/', [BookingController::class, 'store']);
-        Route::get('/{bookingId}', [BookingController::class, 'show']);
-        Route::get('/{bookingId}/status', [BookingController::class, 'status']);
-        Route::post('/by-phone', [BookingController::class, 'byPhone']);
-        Route::patch('/{bookingId}/cancel', [BookingController::class, 'cancel']);
+        Route::get('/{booking:booking_id}', [BookingController::class, 'show']);
+        Route::get('/{booking:booking_id}/status', [BookingController::class, 'status']);
+        Route::patch('/{booking:booking_id}/cancel', [BookingController::class, 'cancel']);
     });
 
     // Admin routes
