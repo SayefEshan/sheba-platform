@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use App\Notifications\BookingConfirmed;
+use Illuminate\Support\Facades\Notification;
 
 class BookingController extends Controller
 {
@@ -151,7 +153,12 @@ class BookingController extends Controller
                 'admin_id' => $request->user()->id
             ]);
 
-            // TODO: Send notification to customer (SMS/Email) - bonus feature
+            // TODO: Send notification to customer (Email) - if customer email is provided
+            if ($booking->customer_email && $request->status === 'confirmed') {
+                Notification::route('mail', $booking->customer_email)
+                    ->notify(new BookingConfirmed($booking));
+            }
+
 
             return response()->json([
                 'status' => 'success',

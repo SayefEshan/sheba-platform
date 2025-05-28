@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use App\Notifications\BookingConfirmed;
+use Illuminate\Notifications\Notifiable;
 
 class Booking extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'booking_id',
@@ -125,6 +127,19 @@ class Booking extends Model
             'status' => 'confirmed',
             'confirmed_at' => now(),
         ]);
+
+        // Find or create user for notification
+        $user = \App\Models\User::firstOrCreate(
+            ['email' => $this->customer_email],
+            [
+                'name' => $this->customer_name,
+                'phone' => $this->customer_phone,
+                'address' => $this->customer_address,
+            ]
+        );
+
+        // Send notification
+        $user->notify(new BookingConfirmed($this));
     }
 
     /**
