@@ -91,7 +91,6 @@ docker compose exec node npm run dev
 
 -   Backend API: http://localhost:8000/api/v1
 
-
 ## Database Management
 
 1. Access MySQL:
@@ -123,11 +122,9 @@ The API documentation is available in multiple formats:
     - File: [Sheba-Platform-API.postman_collection.json](Sheba-Platform-API.postman_collection.json)
     - Import this file into Postman to get started
 
-
 Key API endpoints:
 
 -   Health Check: `GET /`
 -   Services: `GET /services`
 -   Bookings: `POST /bookings`
 -   Admin: `POST /admin/login`
-
