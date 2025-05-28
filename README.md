@@ -68,28 +68,30 @@ docker compose exec app php artisan migrate --seed
 
 ## Default Admin Credentials
 
-After running the seeders, you can log in with these credentials:
+After running the seeders, you can authenticate as an administrator using these credentials:
 
 ```
 Email: admin@sheba.xyz
 Password: admin123
 ```
 
-## Development Workflow
+To obtain the bearer token for admin routes:
 
-1. Start the development servers:
+1. Make a POST request to `/api/v1/admin/login` with the credentials above
+2. The response will include a bearer token in the format: `Bearer <token>`
+3. Include this token in the Authorization header for subsequent admin API requests
+
+Example cURL request:
 
 ```bash
-# Backend (Laravel)
-docker compose exec app php artisan serve
-
-# Frontend (Vite)
-docker compose exec node npm run dev
+curl -X POST http://localhost:8000/api/v1/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@sheba.xyz", "password": "admin123"}'
 ```
 
-2. Access the application:
+## Development Workflow
 
--   Backend API: http://localhost:8000/api/v1
+1. Backend API: http://localhost:8000/api/v1
 
 ## Database Management
 
