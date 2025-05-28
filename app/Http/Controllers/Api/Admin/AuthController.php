@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -31,7 +32,23 @@ class AuthController extends Controller
 
         $admin = Admin::active()->where('email', $request->email)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if (!$admin) {
+            $user = User::where('email', $request->email)->first();
+
+            if ($user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Please login as an admin'
+                ], 401);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This email is not registered. Please register'
+            ], 401);
+        }
+
+        if (!Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid credentials'

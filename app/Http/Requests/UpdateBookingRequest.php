@@ -12,7 +12,7 @@ class UpdateBookingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::check() && Auth::user()->canPerformAction('update_booking_status');
+        return true;
     }
 
     /**

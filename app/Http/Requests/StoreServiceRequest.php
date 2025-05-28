@@ -12,8 +12,8 @@ class StoreServiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Check if user is authenticated and is an admin
-        return Auth::user() && Auth::user()->canPerformAction('create_service');
+        return true;
+
     }
 
     /**
